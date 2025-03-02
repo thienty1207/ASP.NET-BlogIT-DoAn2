@@ -1,0 +1,65 @@
+﻿@model IEnumerable<BlogIT.Models.Comment>
+
+@{
+    ViewBag.Title = "Quản Lý Bình Luận";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Quản Lý Bình Luận</h2>
+
+    @if (TempData["mess"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @Html.Raw(TempData["mess"].ToString())
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <form method="get" action="@Url.Action("ManageComments", "Admin")" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" placeholder="Nhập User ID để tìm kiếm" value="@ViewBag.CurrentSearch" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Tìm Kiếm</button>
+            </span>
+        </div>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nội Dung</th>
+                <th>Bài Viết</th>
+                <th>Người Dùng</th>
+                <th>Ngày Tạo</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                <tr>
+                    <td>@comment.CommentID</td>
+                    <td>@comment.Content</td>
+                    <td>@comment.BlogPost.Title</td>
+                    <td>@comment.User.FullName</td>
+                    <td>@comment.CreatedAt.Value.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @Html.ActionLink("Xem Bình Luận Phản Hồi", "ViewCommentReplies", new { commentId = comment.CommentID }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Xóa", "LockComment", new { id = comment.CommentID }, new { @class = "btn btn-danger", onclick = "return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <a href="@Url.Action("ManageComments", new { page = i, searchString = ViewBag.CurrentSearch })" class="btn btn-link">@i</a>
+        }
+    </div>
+</div>

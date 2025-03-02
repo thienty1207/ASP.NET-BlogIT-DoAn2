@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+
+
+@model BlogIT.Models.User
+@{
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var currentUser = Session["user"] as BlogIT.Models.User; // Lấy thông tin người dùng từ Session
+    bool isFollowing = false; // Biến để xác định trạng thái theo dõi
+
+    if (currentUser != null)
+    {
+        using (var context = new BlogIT.Models.BlogITEntities()) // Thay 'YourDbContext' bằng tên context của bạn
+        {
+            isFollowing = context.Follow
+                .Any(f => f.FollowerID == currentUser.UserID && f.FollowingID == Model.UserID);
+        }
+    }
+}
+<section class="breadcrumb-outer text-center bg-orange position-relative">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Xem hồ sơ</h2>
+            <nav aria-label="breadcrumb">
+               
+            </nav>
+        </div>
+    </div>
+    <div class="section-overlay"></div>
+</section>
+
+
+<div class="container mt-5">
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info mt-3">
+            @TempData["Message"]
+        </div>
+    }
+    <div class="row">
+        <!-- Profile Section -->
+        <div style="margin-top:50px" class="col-lg-3 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <div class="profile-image-wrapper">
+                        <img src="@Url.Content("~/images/avt/" + Model.ProfileImage)" class="rounded-circle mb-3 shadow-lg" width="150" alt="Profile Image">
+                    </div>
+                    <h4 class="card-title">@Model.FullName</h4>
+                    <p class="text-muted">@Html.Raw(Model.Bio)</p>
+                    <p><i class="fas fa-envelope"></i> @Model.Email</p>
+                    <p><i class="fas fa-calendar-alt"></i> Tham gia từ: @Model.CreatedAt.Value.ToString("dd/MM/yyyy")</p>
+                    @if (Session["user"] != null && ((BlogIT.Models.User)Session["user"]).UserID != Model.UserID)
+                    {
+                        <!-- Nút Theo dõi -->
+                        <button class="btn btn-primary btn-follow mt-3"
+                                onclick="location.href='@Url.Action("FollowUser", "Home", new { userId = Model.UserID })'">
+                            @(isFollowing ? "Hủy Theo Dõi" : "Theo Dõi")
+                        </button>
+                        <!-- Nút Theo dõi -->
+                        <button class="btn btn-primary btn-follow mt-3"
+                                onclick="location.href='@Url.Action("ReportUser", "Home", new { userId = Model.UserID })'">
+                            Tố cáo
+                        </button>
+                    }
+                    else if (Session["user"] == null)
+                    {
+                        <!-- Nút Theo dõi -->
+                        <button class="btn btn-primary btn-follow mt-3"
+                                onclick="location.href='@Url.Action("FollowUser", "Home", new { userId = Model.UserID })'">
+                            @(isFollowing ? "Hủy Theo Dõi" : "Theo Dõi")
+                        </button>
+                        <button class="btn btn-primary btn-follow mt-3"
+                                onclick="location.href='@Url.Action("ReportUser", "Home", new { userId = Model.UserID })'">
+                            Tố cáo
+                        </button>
+                    }
+                    else
+                    {
+                        <a class="btn btn-secondary mt-3" href="@Url.Action("CreatePost","Home")">Đăng Blog Mới</a>
+
+                    }
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Blog Posts Section -->
+        <div class="col-lg-9 mb-4 "  >
+            <h3 style="margin-right: 250px" class="mb-4 text-center">Bài viết của @Model.FullName</h3>
+            <div class="row">
+                
+                @foreach (var post in ViewBag.PagedPosts)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm border-0 hover-shadow">
+                            <div class="card-img-top position-relative">
+                                @if (currentUser != null && currentUser.UserID == Model.UserID)
+                                {
+                                    <div class="dropdown position-absolute" style="top: 10px; right: 10px;">
+                                        <button class="btn btn-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i> <!-- Biểu tượng ba chấm -->
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("EditPost", "Home", new { id = post.PostID })">
+                                                    <i class="fas fa-edit"></i> Chỉnh sửa <!-- Biểu tượng chỉnh sửa -->
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("DeletePost", "Home", new { id = post.PostID })" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+                                                    <i class="fas fa-trash"></i> Xóa <!-- Biểu tượng xóa -->
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                }
+                                <img style="height:350px;width:100%" src="@Url.Content("~/images/blog/" + post.Image)" class="img-fluid rounded-top" alt="Post Image">
+
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <a href="@Url.Action("Detail", "Home", new { id = post.PostID })" class="text-decoration-none text-primary">
+                                        @post.Title
+                                    </a>
+                                </h5>
+                                <p class="card-text">@Html.Raw(post.Content.Length > 50 ? post.Content.Substring(0, 50) + "..." : post.Content)</p>
+                                <small class="text-muted">Đăng ngày @post.CreatedAt.ToString("dd/MM/yyyy")</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            <nav style="margin-left:300px" aria-label="Page navigation example" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Profile", new { id = Model.UserID, page = currentPage - 1 })">Trước</a>
+                    </li>
+
+                    @for (var i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Profile", new { id = Model.UserID, page = i })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Profile", new { id = Model.UserID, page = currentPage + 1 })">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .post-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .card-img-top:hover .post-overlay {
+        opacity: 1;
+    }
+
+    .breadcrumb-outer {
+        background-color: #f39c12;
+        padding: 60px 0;
+        color: white;
+    }
+
+    .breadcrumb-content h2 {
+        color: white;
+    }
+
+    .section-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    .btn-follow {
+        transition: all 0.3s ease;
+    }
+
+        .btn-follow:hover {
+            background-color: #2980b9;
+            color: white;
+        }
+</style>
+

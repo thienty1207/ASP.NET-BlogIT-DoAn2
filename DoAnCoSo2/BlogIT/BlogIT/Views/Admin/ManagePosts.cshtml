@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BlogIT.Models.BlogPost>
+@{
+    ViewBag.Title = "Quản Lý Bài Viết";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Quản Lý Bài Viết</h2>
+
+    <form method="get" action="@Url.Action("ManagePosts")" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" value="@ViewBag.CurrentSearch" placeholder="Tìm kiếm bài viết..." />
+            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+        </div>
+    </form>
+
+    <div class="row">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text">Ngày tạo: @post.CreatedAt.Value.ToString("dd/MM/yyyy")</p>
+                        <div class="d-flex justify-content-between">
+                            @Html.ActionLink("Xem Chi Tiết", "Detail","Home", new { id = post.PostID }, new { @class = "btn btn-info" })
+                            @Html.ActionLink("Xóa", "DeletePost", new { id = post.PostID }, new { @class = "btn btn-danger", onclick = "return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <a href="@Url.Action("ManagePosts", new { page = i, searchString = ViewBag.CurrentSearch })" class="btn btn-link">@i</a>
+        }
+    </div>
+</div>

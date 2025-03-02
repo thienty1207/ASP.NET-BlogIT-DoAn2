@@ -1,0 +1,102 @@
+﻿@model List<BlogIT.Models.Bookmark>
+@{
+    ViewBag.Title = "Bookmarks";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+<section class="breadcrumb-outer text-center bg-orange">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Đã lưu</h2>
+            <nav aria-label="breadcrumb">
+               
+            </nav>
+        </div>
+    </div>
+    <div class="section-overlay"></div>
+</section>
+
+<section class="bookmarks-section py-5">
+    <div class="container">
+        <h2 class="mb-4">Danh Sách Bài Viết Đã Lưu</h2>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                Không có bài viết nào được lưu.
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var bookmark in Model)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card d-flex flex-row">
+                            <img src="~/images/blog/@bookmark.BlogPost.Image" class="card-img-left" alt="Hình ảnh bài viết" style="width: 150px; height: auto; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="@Url.Action("Detail", "Home", new { id = bookmark.PostID })">
+                                        @bookmark.BlogPost.Title
+                                    </a>
+                                </h5>
+                                <p class="card-text text-muted">@bookmark.BlogPost.User.FullName</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Phần phân trang -->
+            <div class="pagination-container mt-4 text-center">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <a href="@Url.Action("Bookmarks", new { page = ViewBag.CurrentPage - 1 })" class="btn btn-secondary">Trước</a>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    if (i == ViewBag.CurrentPage)
+                    {
+                        <span class="btn btn-primary disabled">@i</span>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Bookmarks", new { page = i })" class="btn btn-light">@i</a>
+                    }
+                }
+
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <a href="@Url.Action("Bookmarks", new { page = ViewBag.CurrentPage + 1 })" class="btn btn-secondary">Tiếp</a>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    .card {
+        display: flex; /* Để thẻ card sử dụng flexbox */
+        flex-direction: row; /* Sắp xếp theo hàng */
+        align-items: center; /* Căn giữa nội dung theo chiều dọc */
+    }
+
+    .card-img-left {
+        width: 150px; /* Đặt chiều rộng cố định cho hình ảnh */
+        height: auto; /* Chiều cao tự động để giữ tỷ lệ */
+        object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+    }
+
+    .card-body {
+        padding: 15px; /* Đặt khoảng cách cho nội dung bên trong */
+    }
+
+    .card-title {
+        margin-bottom: 5px; /* Đặt khoảng cách dưới tiêu đề */
+    }
+
+    .card-text {
+        margin-top: 0; /* Không có khoảng cách trên tên tác giả */
+    }
+</style>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="beba75219b5040379a6f390e976e71a5" Name="Diagram1" ZoomLevel="67">
+        <EntityTypeShape EntityType="BlogITModel.BlogPost" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.Bookmark" Width="1.5" PointX="5.25" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.Comment" Width="1.5" PointX="8.25" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.CommentReply" Width="1.5" PointX="10.5" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.Follow" Width="1.5" PointX="3" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.Notification" Width="1.5" PointX="3" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.PostLike" Width="1.5" PointX="5.25" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.PostTag" Width="1.5" PointX="8.25" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.ReportBlog" Width="1.5" PointX="5.25" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.ReportComment" Width="1.5" PointX="13.5" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.ReportCommentReply" Width="1.5" PointX="12.75" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.ReportUser" Width="1.5" PointX="3" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.Tag" Width="1.5" PointX="6" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BlogITModel.User" Width="1.5" PointX="0.75" PointY="12.625" IsExpanded="true" />
+        <AssociationConnector Association="BlogITModel.FK__BlogPost__UserID__70DDC3D8" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_Bookmark_BlogPost" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_Comment_BlogPost" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_PostLike_BlogPost" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_PostTag_BlogPost1" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_ReportBlog_BlogPost" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__Bookmark__UserID__71D1E811" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__Comment__UserID__73BA3083" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_CommentReply_Comment" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_ReportComment_Comment" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__CommentRe__UserI__75A278F5" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_ReportCommentReply_CommentReply" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__Follow__Follower__778AC167" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__Follow__Followin__787EE5A0" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__Notificat__UserI__797309D9" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__PostLike__UserID__7A672E12" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_PostTag_Tag" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__ReportBlo__Repor__7E37BEF6" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__ReportCom__Repor__00200768" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK_ReportCommentReply_User" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__ReportUse__Repor__03F0984C" ManuallyRouted="false" />
+        <AssociationConnector Association="BlogITModel.FK__ReportUse__Repor__04E4BC85" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

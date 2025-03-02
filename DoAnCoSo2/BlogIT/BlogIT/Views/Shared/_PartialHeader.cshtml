@@ -1,0 +1,134 @@
+﻿@{
+    var userdn = Session["user"] as BlogIT.Models.User;
+    List<BlogIT.Models.Notification> notifications = new List<BlogIT.Models.Notification>();
+    int unreadCount = 0; // Khởi tạo biến để đếm thông báo chưa đọc
+    if (userdn != null)
+    {
+        using (var db = new BlogIT.Models.BlogITEntities()) // Thay YourDbContext bằng tên DbContext của bạn
+        {
+            notifications = db.Notification
+                              .Where(n => n.UserID == userdn.UserID)
+                              .OrderByDescending(n => n.CreatedAt) // Sắp xếp thông báo theo thời gian tạo
+                              .ToList();
+        }
+        unreadCount = notifications.Count(n => n.IsRead == false);
+    }
+}
+
+<header id="inner-navigation">
+    <!-- navbar start -->
+    <nav class="navbar navbar-default navbar-fixed-top navbar-sticky-function navbar-arrow">
+        <div class="container">
+            <div class="logo pull-left">
+                <h1><a href="@Url.Action("Index","Home")" class="logo-text">Blog IT</a></h1>
+            </div>
+
+            <div id="navbar" class="navbar-nav-wrapper text-center">
+                <ul class="nav navbar-nav navbar-right" id="responsive-menu">
+
+                    @if (Session["user"] != null)
+                    {
+                        var user = (BlogIT.Models.User)Session["user"]; // Giả sử User là tên lớp người dùng của bạn
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="notificationLink" title="Thông Báo" onclick="toggleNotifications()">
+                                <i class="fas fa-bell" aria-hidden="true"></i>
+                                <span class="badge bg-danger">@unreadCount</span> <!-- Số lượng thông báo -->
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @user.FullName <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="@Url.Action("Profile", "Home", new { id = user.UserID })">Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ChangePassword", "Home")">Đổi mật khẩu</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ChangeProfile", "Home")">Đổi thông tin</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Bookmarks", "Home")">Bookmark</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Logout", "Home")">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="@Url.Action("Login", "Home")">
+                                <i class="fa fa-sign-in-alt"></i> Đăng nhập
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+
+        <div id="slicknav-mobile"></div>
+    </nav>
+    <!-- navbar end -->
+</header>
+
+<!-- Khu vực thông báo -->
+<div id="notificationArea" style="width:250px;margin-right:150px; display: none; border: 1px solid #ccc; padding: 10px; background-color: white; position: absolute; right: 20px; top: 70px; z-index: 1050;">
+    <h5>Thông Báo</h5>
+    <ul class="list-group">
+        @foreach (var notification in notifications)
+        {
+            <li class="list-group-item">
+                @notification.Message - @notification.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm")
+            </li>
+        }
+    </ul>
+</div>
+
+<script>
+function toggleNotifications() {
+    const notificationArea = document.getElementById('notificationArea');
+    const isHidden = notificationArea.style.display === 'none';
+
+    // Hiển thị hoặc ẩn khu vực thông báo
+    notificationArea.style.display = isHidden ? 'block' : 'none';
+
+    // Nếu đang hiển thị thông báo, đánh dấu là đã đọc
+    if (isHidden) {
+        fetch('@Url.Action("MarkNotificationsAsRead", "Home")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest' // Đảm bảo là AJAX request
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector('#notificationLink .badge').innerText = '0'; // Đặt lại số lượng thông báo chưa đọc
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+
+</script>
+
+<style>
+    .logo-text {
+        font-family: 'Arial', sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        color: #4CAF50; /* Màu xanh lá nổi bật */
+        text-decoration: none;
+        text-transform: uppercase; /* Chuyển đổi thành chữ in hoa */
+        letter-spacing: 2px; /* Khoảng cách giữa các ký tự */
+    }
+
+        .logo-text:hover {
+            color: #3e8e41; /* Đổi màu khi di chuột */
+        }
+
+        .logo-text:focus {
+            outline: none; /* Bỏ viền focus mặc định */
+        }
+
+    .list-group-item {
+        margin-bottom: 5px; /* Giãn cách giữa các thông báo */
+    }
+</style>

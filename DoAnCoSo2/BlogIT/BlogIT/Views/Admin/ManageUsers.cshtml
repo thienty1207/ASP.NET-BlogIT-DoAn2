@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BlogIT.Models.User>
+@{
+    ViewBag.Title = "Quản Lý Người Dùng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Quản Lý Người Dùng</h2>
+
+    <form method="get" action="@Url.Action("ManageUsers")" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" value="@ViewBag.CurrentSearch" placeholder="Tìm kiếm người dùng..." />
+            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+        </div>
+    </form>
+
+    <div class="row">
+        @foreach (var user in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@user.FullName</h5>
+                        <p class="card-text">Email: @user.Email</p>
+                        <p class="card-text">Vai trò: @user.Role</p>
+                        <p class="card-text">
+                            Trạng thái: @(user.Status ? "Hoạt động" : "Bị khóa")
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            @Html.ActionLink(user.Status ? "Khóa" : "Mở khóa", "LockUser", new { id = user.UserID }, new { @class = "btn btn-warning" })
+                            @if (user.Role == "customer")
+                            {
+                                @Html.ActionLink("Phân quyền Admin", "ChangeUserRole", new { id = user.UserID, role = "admin" }, new { @class = "btn btn-success" })
+                            }
+                            else if (user.Role == "admin")
+                            {
+                                @Html.ActionLink("Chuyển thành Customer", "ChangeUserRole", new { id = user.UserID, role = "customer" }, new { @class = "btn btn-secondary" })
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <a href="@Url.Action("ManageUsers", new { page = i, searchString = ViewBag.CurrentSearch })" class="btn btn-link">@i</a>
+        }
+    </div>
+</div>

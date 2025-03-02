@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Đăng Ký";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<section class="breadcrumb-outer text-center bg-orange">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Đăng Ký</h2>
+            <nav aria-label="breadcrumb">
+
+            </nav>
+        </div>
+    </div>
+</section>
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-success">@ViewBag.ErrorMessage</div>
+}
+<section class="login" style="margin-left: 20%">
+    <div class="container d-flex justify-content-center align-items-center h-100">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="register-form">
+                    <form action="@Url.Action("Register", "Home")" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-title text-center">
+                                    <h2>Đăng Ký</h2>
+                                    <p>Nhập thông tin của bạn để trở thành thành viên.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-xs-12">
+                                <label>Họ Tên:</label>
+                                <input type="text" name="FullName" class="form-control" placeholder="Nhập họ tên đầy đủ" required>
+                            </div>
+                            <div class="form-group col-xs-12">
+                                <label>Email:</label>
+                                <input type="email" name="Email" class="form-control" placeholder="abc@xyz.com" required>
+                            </div>
+                            <div class="form-group col-xs-12">
+                                <label>Mật Khẩu:</label>
+                                <input type="password" name="Password" class="form-control" placeholder="Nhập mật khẩu" required>
+                            </div>
+                            <div class="form-group col-xs-12">
+                                <label>Xác Nhận Mật Khẩu:</label>
+                                <input type="password" name="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" required>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="comment-btn mar-top-30">
+                                    <button type="submit" class="btn-blog" id="registerButton">Đăng Ký Ngay</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    .login {
+        display: flex;
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+    }
+
+    .register-form {
+        background-color: #fff; /* Màu nền của form */
+        padding: 20px; /* Khoảng cách bên trong */
+        border-radius: 8px; /* Bo góc */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+    }
+
+    .container {
+        height: 100%; /* Đảm bảo chiều cao đầy đủ cho container */
+    }
+</style>

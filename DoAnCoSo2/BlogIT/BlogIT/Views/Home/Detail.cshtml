@@ -1,0 +1,373 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+@model BlogIT.Models.BlogPost
+@if (TempData["Message"] != null)
+{
+    <script>
+        alert(Html.Raw(TempData["Message"].ToString()));
+    </script>
+}
+
+
+<div id="mt_banner" class="innerbanner">
+    <div class="container-fluid">
+        <div class="featured-image" style="background-image: url('@Url.Content("~/images/blog/" + Model.Image)')"></div>
+        <div class="banner-caption">
+            <div class="banner_caption_text">
+                @foreach (var tag in Model.PostTag)
+                {
+                    <div class="post-category">
+                        <ul>
+                            <li class="cat-yellow"><a href="@Url.Action("Index", "Home", new { tagId = tag.Tag.TagID })" class="white">@tag.Tag.Name</a></li>
+                        </ul>
+                    </div>
+                }
+
+                <h1>@Model.Title</h1>
+                <div class="item-meta">
+                    <span>by</span>
+                    <a href="@Url.Action("Profile","Home",new {id = Model.UserID})">@Model.User.FullName</a><br>
+                    <time datetime="@Model.CreatedAt.Value.ToString("yyyy-MM-dd")">@Model.CreatedAt.Value.ToString("MMMM dd, yyyy")</time>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Banner -->
+<!--* Blog Main Sec*-->
+<section id="blog_main_sec" class="section-inner">
+    <div class="container">
+        <!--*Blog Content Sec*-->
+        <div class="blog-detail-main">
+            <div class="post_body">
+                @Html.Raw(Model.Content)
+            </div>
+            <div class="post-actions">
+                <button id="like-button" class="btn btn-light" data-post-id="@Model.PostID">
+                    <i class="fas fa-thumbs-up"></i> <span id="like-text">Thích @Model.PostLike.Count </span>
+                </button>
+                <button class="btn btn-link" onclick="bookmarkPost(@Model.PostID)">
+                    <i class="fas fa-bookmark"></i> Bookmark
+                </button>
+                <!-- Nút Tố Cáo Bình Luận -->
+                <button class="btn btn-link btn-sm text-danger" title="Tố Cáo Bình Luận" onclick="reportBlog('@Model.PostID')">
+                    <i class="fas fa-flag"></i> Tố Cáo
+                </button>
+
+
+            </div>
+            <div class="tag mar-top-30">
+                <div class="widget-tags-main">
+                    <h5 class="bg-orange">Tags:</h5>
+                    @foreach (var tag in Model.PostTag)
+                    {
+
+                        <a href="@Url.Action("Index", "Home", new { tagId = tag.Tag.TagID })" class="">@tag.Tag.Name</a>
+                    }
+
+
+                </div>
+            </div>
+
+
+            <!--=========================* Comment Sec*===========================-->
+            <div id="comments">
+                <div class="comments-wrap">
+                    <!-- Hiển thị số lượng bình luận -->
+                    <h3 class="single-post_heading blog_heading_border">Comments (@ViewBag.Comments.Count)</h3>
+                    <ol class="comments-lists">
+                        <!-- Duyệt qua danh sách bình luận -->
+                        @foreach (var comment in ViewBag.Comments)
+                        {
+                            <li class="comment">
+                                <div class="activity_rounded">
+                                    <img src="~/images/avt/@comment.User.ProfileImage" alt="image" />
+                                </div>
+                                <div class="comment-body">
+                                    <h4 class="text-left">
+                                        @comment.User.FullName &nbsp;&nbsp;
+                                        <small class="date-posted pull-right">@comment.CreatedAt.ToString("dd MMM, yyyy")</small>
+                                        <!-- Kiểm tra nếu bình luận là của người dùng hiện tại -->
+                                        @if (Session["user"] != null && ((BlogIT.Models.User)Session["user"]).UserID == comment.UserID)
+                                        {
+                                            <!-- Hiển thị biểu tượng "3 chấm" để xóa bình luận -->
+                                            <button class="btn btn-link btn-sm text-muted" title="Xóa bình luận" onclick="deleteComment('@comment.CommentID')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        }
+                                        else if (Session["user"] != null)
+                                        {
+                                            <!-- Nút Tố Cáo Bình Luận -->
+                                            <button class="btn btn-link btn-sm text-danger" title="Tố Cáo Bình Luận" onclick="reportComment('@comment.CommentID')">
+                                                <i class="fas fa-flag"></i> Tố Cáo
+                                            </button>
+
+                                        }
+                                    </h4>
+                                    <p>@comment.Content</p>
+                                    <button style="height:40px" class="pull-left btn-blog" onclick="toggleReplyForm('@comment.CommentID')">Trả lời</button>
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <!-- Hiển thị trả lời bình luận nếu có -->
+                                @if (comment.CommentReply.Count > 0)
+                                {
+                                    <ol class="children">
+                                        @foreach (var reply in comment.CommentReply)
+                                        {
+                                            <li class="comment">
+                                                <div class="activity_rounded">
+                                                    <img src="~/images/avt/@reply.User.ProfileImage" alt="image" />
+                                                </div>
+                                                <div class="comment-body">
+                                                    <h4 class="text-left">
+                                                        @reply.User.FullName &nbsp;&nbsp;
+                                                        <small class="date-posted pull-right">@reply.CreatedAt.ToString("dd MMM, yyyy")</small>
+                                                        @if (Session["user"] != null && ((BlogIT.Models.User)Session["user"]).UserID == reply.UserID)
+                                                        {
+                                                            <!-- Hiển thị biểu tượng "3 chấm" để xóa bình luận -->
+                                                            <button class="btn btn-link btn-sm text-muted" title="Xóa bình luận" onclick="deleteReply('@reply.ReplyID')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        }
+                                                        else if (Session["user"] != null)
+                                                        {
+                                                            <!-- Nút Tố Cáo Bình Luận -->
+                                                            <button class="btn btn-link btn-sm text-danger" title="Tố Cáo Bình Luận" onclick="reportCommentReply('@reply.ReplyID')">
+                                                                <i class="fas fa-flag"></i> Tố Cáo
+                                                            </button>
+
+                                                        }
+                                                    </h4>
+                                                    <p>@reply.Content</p>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ol>
+                                }
+
+                                <!-- Form trả lời bình luận -->
+                                <!-- Form trả lời bình luận -->
+                                <div class="reply-form" id="reply-form-@comment.CommentID" style="display:none;">
+                                    <form action="@Url.Action("PostReply")" method="post">
+                                        <input type="hidden" name="commentId" value="@comment.CommentID" />
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <textarea name="content" placeholder="Trả lời bình luận..." class="form-control" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn-blog">Gửi</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </li>
+                        }
+                    </ol>
+
+                    <!-- Form để người dùng để lại bình luận -->
+                    <div class="leave_comment">
+                        <h3 class="blog_heading_border"> Để lại bình luận </h3>
+                        <form action="@Url.Action("PostComment")" method="post">
+                            <input type="hidden" name="postId" value="@Model.PostID" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <textarea name="content" placeholder="Message" class="form-control" required></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn-blog">Gửi</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function toggleReplyForm(commentId) {
+                    var form = document.getElementById('reply-form-' + commentId);
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                }
+            </script>
+
+            <!--=========================*End Comment Sec*===========================-->
+            <!--* End Blog Content Sec*-->
+        </div>
+    </div>
+</section>
+<!--*End Blog Main Sec*-->
+<!--* Blog*-->
+<section id="mt_blog" class="light-bg pad-top-0 py-5">
+    <div class="container">
+        <div class="blog_post_sec blog_post_inner">
+            <div class="row">
+                @if (ViewBag.LatestBlogs != null)
+                {
+                    foreach (var blog in ViewBag.LatestBlogs)
+                    {
+                        <div class="col-md-4 col-sm-12 mar-bottom-30">
+                            <div class="blog-post_wrapper image-wrapper shadow-sm rounded overflow-hidden">
+                                <!-- Blog Post Image -->
+                                <div style="height:400px;width:100%" class="blog-post-image">
+                                    <img src="~/images/blog/@blog.Image" alt="image" class="img-responsive center-block post_img" />
+                                </div>
+
+                                <!-- Blog Post Content -->
+                                <div style="width:100%" class="post-content p-3 bg-white">
+                                    <!-- Post Category -->
+                                    <div class="post-category">
+                                        <ul class="list-unstyled">
+                                            @foreach (var tag in blog.PostTag)
+                                            {
+                                                <li class="cat-green">
+                                                    <a href="@Url.Action("Index", "Home", new { tagId = tag.Tag.TagID })" class="white">@tag.Tag.Name</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <!-- Post Date -->
+                                    <div class="post-date text-muted small mb-2">
+                                        <p><a href="#">@blog.CreatedAt.ToString("dd MMMM yyyy")</a></p>
+                                    </div>
+
+                                    <!-- Post Title -->
+                                    <h2 class="entry-title white">
+                                        <a href="/Home/Detail/@blog.PostID" class="white">@blog.Title</a>
+                                    </h2>
+
+                                    <!-- Author Info -->
+                                    <div class="item-meta white">
+                                        <span>by</span>
+                                        <a class="author-name white" href="#">@blog.User.FullName</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+       $(document).ready(function() {
+        $('#like-button').click(function() {
+            var postId = $(this).data('post-id');
+
+            $.ajax({
+                url: '@Url.Action("ToggleLike", "Home")',
+                type: 'POST',
+                data: { postId: postId },
+                success: function(response) {
+                    if (response.success) {
+                        if (response.liked) {
+                            alert('Thích thành công');
+                        } else {
+                            alert('Đã bỏ thích.');
+                        }
+                        location.reload();
+                    }
+                },
+                error: function() {
+                    alert(response.message);
+                }
+            });
+        });
+    });
+    function bookmarkPost(postId) {
+    var button = $('#bookmark-button');
+
+    $.ajax({
+        url: '@Url.Action("ToggleBookmark", "Home")',
+        type: 'POST',
+        data: { postId: postId },
+        success: function(response) {
+            if (response.success) {
+                if (response.bookmarked) {
+                    alert('Đã đánh dấu bài viết.');
+                } else {
+                    alert('Đã bỏ đánh dấu bài viết.');
+                }
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert(response.message);
+        }
+    });
+}
+
+    function toggleReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+     function deleteComment(commentId) {
+     if (confirm("Bạn có chắc muốn xóa bình luận này?")) {
+         $.ajax({
+             url: '@Url.Action("DeleteComment", "Home")',
+             type: 'POST',
+             data: { commentId: commentId },
+             success: function (response) {
+                 if (response.success) {
+                     location.reload();
+                     alert("Xóa bình luận thành công.");
+                 } else {
+                     alert("Không thể xóa bình luận.");
+                 }
+             },
+             error: function () {
+                 alert("Có lỗi xảy ra khi xóa bình luận.");
+             }
+         });
+     }
+    }
+    function deleteReply(replyId) {
+    if (confirm("Bạn có chắc chắn muốn xóa phản hồi này không?")) {
+        $.ajax({
+            url: '@Url.Action("DeleteReply", "Home")', // Đảm bảo đổi 'Home' thành tên controller của bạn
+            type: 'POST',
+            data: { replyId: replyId },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload(); // Tải lại trang để cập nhật danh sách phản hồi
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Có lỗi xảy ra. Vui lòng thử lại sau.");
+            }
+        });
+    }
+}
+function reportComment(commentId) {
+    // Chuyển hướng đến trang báo cáo bình luận
+    window.location.href = '@Url.Action("ReportComment", "Home")' + '?commentId=' + commentId;
+    }
+function reportCommentReply(commentId) {
+    // Chuyển hướng đến trang báo cáo bình luận
+    window.location.href = '@Url.Action("ReportCommentReply", "Home")' + '?commentId=' + commentId;
+}
+function reportBlog(blogId) {
+    // Chuyển hướng đến trang báo cáo blog
+    window.location.href = '@Url.Action("ReportBlog", "Home")' + '?blogId=' + blogId;
+}
+
+</script>
+
+
+

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BlogIT.Models.CommentReply>
+@{
+    ViewBag.Title = "Bình Luận Phản Hồi";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Bình Luận Phản Hồi</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nội Dung</th>
+                <th>Người Dùng</th>
+                <th>Ngày Tạo</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reply in Model)
+            {
+                <tr>
+                    <td>@reply.ReplyID</td>
+                    <td>@reply.Content</td>
+                    <td>@reply.User.FullName</td>
+                    <td>@reply.CreatedAt.Value.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @Html.ActionLink("Xóa", "LockCommentReply", new { id = reply.ReplyID }, new { @class = "btn btn-danger", onclick = "return confirm('Bạn có chắc chắn muốn xóa bình luận phản hồi này không?');" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center">
+        <a href="@Url.Action("ManageComments", "Admin")" class="btn btn-secondary">Quay lại quản lý bình luận</a>
+    </div>
+</div>

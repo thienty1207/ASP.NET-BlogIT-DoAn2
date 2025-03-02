@@ -1,0 +1,263 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<!-- Slider -->
+<section id="mt_banner">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            @if (ViewBag.PopularPosts != null && ViewBag.PopularPosts.Count > 0)
+            {
+                foreach (var post in ViewBag.PopularPosts)
+                {
+                    <div class="swiper-slide">
+                        <div class="slide-inner" style="background-image:url(@Url.Content("~/images/blog/" + post.Image))"></div>
+                        <div class="banner_caption_text">
+                            <div class="post-category">
+                                <ul>
+                                    @foreach (var tag in post.PostTag)
+                                    {
+                                        <li class="cat-yellow">
+                                            <a href="@Url.Action("Index", "Home", new { tagID = tag.Tag.TagID })" class="white">@tag.Tag.Name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <h2 style="font-family: Arial, sans-serif;"><a href="@Url.Action("Detail", "Home", new { id = post.PostID })">@post.Title</a></h2>
+                            <div class="item-meta">
+                                <span>by</span>
+                                <a href="@Url.Action("Profile","Home",new {id = post.UserID})">@post.User.FullName</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Không có bài viết phổ biến nào.</p>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- End Slider -->
+<script>
+    $(document).ready(function () {
+        // Khởi tạo Swiper
+        var swiper = new Swiper('.swiper-container', {
+            // Cấu hình Swiper của bạn tại đây
+            loop: true, // Nếu bạn muốn slider quay vòng
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next ',
+                prevEl: '.swiper-button-prev ',
+            },
+        });
+
+    });
+</script>
+
+<!--* Blog*-->
+<section id="mt_blog" class="">
+    <div class="container">
+
+        <div class="search-bar mb-4">
+            <form action="@Url.Action("Index", "Home")" method="get" class="d-flex">
+                <input type="text" name="searchTerm" class="form-control me-2" placeholder="Tìm kiếm bài viết..." aria-label="Tìm kiếm" />
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </form>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-9 col-sm-12 width70">
+                <div class="blog_post_sec">
+                    @foreach (var post in Model)
+                    {
+                        <div class="blog-post_wrapper">
+                            <div class="blog-post-image">
+                                <img style="height:300px" src="~/images/blog/@post.Image" alt="Hình ảnh" class="img-responsive center-block post_img" />
+                            </div>
+                            <div class="post-content">
+                                <div class="post-category">
+                                    <ul>
+                                        @foreach (var tag in post.PostTag)
+                                        {
+                                            <li class="cat-yellow"><a href="@Url.Action("Index", "Home", new { tagId = tag.Tag.TagID })" class="white">@tag.Tag.Name</a></li>
+                                        }
+                                        <!-- Nếu bạn có category cho bài viết, hãy thêm ở đây -->
+
+                                    </ul>
+                                </div>
+                                <div class="post-date">
+                                    <p><a href="#">@post.CreatedAt.ToString("dd MMMM yyyy")</a></p>
+                                </div>
+                                <h2 class="entry-title">
+                                    <a href="@Url.Action("Detail", "Home", new { id = post.PostID })" class="">@post.Title ...</a>
+                                </h2>
+                                <div class="item-meta">
+                                    <span>bởi</span>
+                                    <a class="author-name" href="@Url.Action("Profile","Home",new {id = post.UserID})">@post.User.FullName</a> <!-- Nếu có user đăng bài, hãy thêm tại đây -->
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Pagination có thể thêm vào sau -->
+                    <div class="pagination__wrapper">
+                        <ul class="pagination">
+                            @if (ViewBag.CurrentPage > 1)
+                            {
+                                <li><button class="prev" title="trang trước" onclick="location.href='@Url.Action("Index", new { searchTerm = ViewBag.search, tagId = ViewBag.tag, page = ViewBag.CurrentPage - 1 })'">&#10094;</button></li>
+                            }
+                            else
+                            {
+                                <li><button class="prev" title="trang trước" disabled>&#10094;</button></li>
+                            }
+
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                if (i == ViewBag.CurrentPage)
+                                {
+                                    <li><button class="active" title="trang hiện tại">@i</button></li>
+                                    ;
+                                }
+                                else
+                                {
+                                    <li><button onclick="location.href='@Url.Action("Index", new {searchTerm=ViewBag.search, tagId = ViewBag.tag, page = i })'" title="trang @i">@i</button></li>
+                                    ;
+                                }
+                            }
+
+                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                            {
+                                <li><button class="next" title="trang tiếp theo" onclick="location.href='@Url.Action("Index", new {searchTerm=ViewBag.search, tagId = ViewBag.tag, page = ViewBag.CurrentPage + 1 })'">&#10095;</button></li>
+                            }
+                            else
+                            {
+                                <li><button class="next" title="trang tiếp theo" disabled>&#10095;</button></li>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-12 width30">
+                <div class="sidebar">
+
+                    <!-- widget author -->
+                    @*<div class="widget widget-author text-center">
+                        <div class="widget-image">
+                            <img src="~/images/blog/author.png" alt="Hồ Thiên Tỷ - Chủ Web Blogger">
+                        </div>
+                        <div class="widget-author-content">
+                            <div class="widget-author mar-bottom-15">
+                                <h3 class="mar-bottom-5">Hồ Thiên Tỷ</h3>
+                                <span class="author-profession">Chủ Web Blogger</span>
+                            </div>
+                            <p>
+                                Xin chào các bạn! Tôi là Hồ Thiên Tỷ, người sáng lập và phát triển trang blog này với mục tiêu xây dựng một cộng đồng chia sẻ kiến thức IT. Mỗi bài viết, mỗi bình luận là một đóng góp quý giá, giúp chúng ta cùng nhau phát triển. Cảm ơn các bạn đã đồng hành!
+                            </p>
+                            <div class="widget-author-signature">
+                                <img src="~/images/blog/signature.png" alt="Chữ ký Hồ Thiên Tỷ">
+                            </div>
+                        </div>
+                    </div>*@
+
+
+
+                    <div class="widget widget-category">
+                        <div class="widget-content">
+                            <div class="widget-title">
+                                <h3 class="white">Tag</h3>
+                            </div>
+                            <div class="widget-category-main">
+                                <ul class="widget-category-list">
+                                    @if (ViewBag.Tags != null)
+                                    {
+                                        foreach (var tag in ViewBag.Tags)
+                                        {
+                                            <li><a href="@Url.Action("Index", "Home", new { tagId = tag.TagID })">@tag.Name</a></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li>Không có thẻ nào.</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- widget popular post -->
+                    <div class="widget widget-popular-post">
+                        <div class="widget-content">
+                            <div class="widget-title">
+                                <h3 class="white">Bài Viết Phổ Biến</h3>
+                            </div>
+                            <div class="widget-popular-post-main">
+                                @if (ViewBag.PopularPosts != null && ViewBag.PopularPosts.Count > 0)
+                                {
+                                    foreach (var post in ViewBag.PopularPosts)
+                                    {
+                                        <div class="widget-posts">
+                                            <div class="post-thumb">
+                                                <img style="height:50px" src="~/images/blog/@post.Image" alt="@post.Title" />
+                                            </div>
+                                            <div class="post-title">
+                                                <div class="widget-cats">
+                                                    @foreach (var tag in post.PostTag)
+                                                    {
+                                                        <a href="@Url.Action("Index", "Home", new { tagId = tag.Tag.TagID })">@tag.Tag.Name</a>
+                                                    }
+                                                </div>
+                                                <h4 style="font-family:Arial">
+                                                    <a href="@Url.Action("Detail", "Home", new { id = post.PostID })">@post.Title</a>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Không có bài viết phổ biến nào.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- widget tags -->
+                    <div class="widget widget-tags">
+                        <div class="widget-content">
+                            <div class="widget-title">
+                                <h3 class="white" style="font-family:Arial">Tag Nổi Bật</h3>
+                            </div>
+                            <div class="widget-tags-main">
+                                @if (ViewBag.PopularTags != null && ViewBag.PopularTags.Count > 0)
+                                {
+                                    foreach (var tag in ViewBag.PopularTags)
+                                    {
+                                        <a href="@Url.Action("Index", "Home", new { tagId = tag.TagID })">@tag.Name</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Không có tag nổi bật nào.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

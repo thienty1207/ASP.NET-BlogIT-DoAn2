@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Tố Cáo Bình Luận";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+<section class="breadcrumb-outer text-center bg-orange position-relative">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Tố Cáo Bình Luận</h2>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tố Cáo</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="section-overlay"></div>
+</section>
+
+<div class="container mt-5">
+    <form action="@Url.Action("ReportComment", "Home")" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="commentID" value="@ViewBag.CommentID" />
+
+        <div class="form-group">
+            <label for="Reason">Lý Do Tố Cáo</label>
+            <textarea class="form-control" id="Reason" name="reason" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Gửi Tố Cáo</button>
+    </form>
+</div>

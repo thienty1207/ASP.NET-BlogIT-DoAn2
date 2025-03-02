@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Trang Chủ";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Trang Chủ</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Bài Viết Nổi Bật</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tiêu Đề</th>
+                        <th>Lượt Thích</th>
+                        <th>Bình Luận</th>
+                        <th>Ngày Tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.TopPosts)
+                    {
+                        <tr>
+                            <td>@item.Post.Title</td>
+                            <td>@item.LikeCount</td>
+                            <td>@item.CommentCount</td>
+                            <td>@item.Post.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thống Kê Bài Viết Tháng Này</h3>
+        </div>
+        <div class="card-body">
+            <p class="mb-0">Số lượng bài viết được tạo ra trong tháng này: <strong>@ViewBag.PostCountThisMonth</strong></p>
+        </div>
+    </div>
+</div>

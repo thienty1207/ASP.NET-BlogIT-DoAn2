@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Chỉnh Sửa Tag";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@model BlogIT.Models.Tag
+
+<div class="container mt-5">
+    <h2 class="text-center">Chỉnh Sửa Tag</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="card">
+            <div class="card-body">
+                @Html.HiddenFor(model => model.TagID)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name)
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Nhập tên tag..." })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group form-check">
+                    @Html.CheckBoxFor(model => model.Status, new { @class = "form-check-input" })
+                    @Html.LabelFor(model => model.Status, "Hoạt động", new { @class = "form-check-label" })
+                </div>
+
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                @Html.ActionLink("Quay lại", "ManageTag", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    }
+</div>
+

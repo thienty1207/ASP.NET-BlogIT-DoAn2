@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Quên Mật Khẩu";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<section class="breadcrumb-outer text-center bg-orange">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Quên Mật Khẩu</h2>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Quên Mật Khẩu</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="section-overlay"></div>
+</section>
+<!-- Kết thúc BreadCrumb -->
+<!-- Quên Mật Khẩu -->
+<section class="forgot-password">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="fp-content">
+                    @if (ViewBag.Message != null)
+                    {
+                        <div id="responseMessage" class="alert alert-info mt-3" role="alert">
+                            @ViewBag.Message
+                        </div>
+                    }
+
+                    <!-- Nơi hiển thị thông báo phản hồi -->
+                    <p>Vui lòng cung cấp địa chỉ email của bạn.</p>
+                    <form id="forgotPasswordForm" method="post" action="@Url.Action("Forget", "Home")">
+                        <div class="row">
+                            <div class="form-group col-xs-12">
+                                <label>Nhập Địa Chỉ Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập địa chỉ email" required>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="comment-btn">
+                                    <button type="submit" class="btn-blog">Lấy lại mật khẩu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

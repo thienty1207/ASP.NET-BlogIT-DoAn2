@@ -1,0 +1,67 @@
+﻿@model BlogIT.Models.BlogPost
+
+@{
+    ViewBag.Title = "Chỉnh Sửa Blog";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+<section class="breadcrumb-outer text-center bg-orange position-relative">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Chỉnh Sửa Blog</h2>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chỉnh Sửa Blog</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="section-overlay"></div>
+</section>
+
+<div class="container mt-5">
+    <form action="@Url.Action("EditPost", "Home", new { id = Model.PostID })" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.PostID) 
+
+        <div class="form-group">
+            <label for="Title">Tiêu đề</label>
+            <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" required>
+        </div>
+        <div class="form-group">
+            <label for="Content">Nội dung</label>
+            <textarea class="form-control" id="Content" name="Content" rows="5" required>@Model.Content</textarea>
+        </div>
+        <div class="form-group">
+            <label for="Image">Hình ảnh</label>
+            <input type="file" class="form-control-file" id="Image" name="Image">
+            <small>Hình hiện tại: <img src="@Url.Content("~/images/blog/" + Model.Image)" alt="Blog Image" width="100" /></small>
+        </div>
+        <div class="form-group">
+            <label>Chế độ công khai</label><br />
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="IsPublic" id="Public" value="true" @(Model.IsPublic ? "checked" : "")>
+                <label class="form-check-label" for="Public">Công khai</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="IsPublic" id="Private" value="false" @(!Model.IsPublic ? "checked" : "")>
+                <label class="form-check-label" for="Private">Riêng tư</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Tags">Chọn Tag</label>
+            <select multiple class="form-control" id="Tags" name="Tags">
+                @foreach (var tag in ViewBag.Tags as List<BlogIT.Models.Tag>)
+                {
+                    <option value="@tag.TagID">@tag.Name</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Cập Nhật Blog</button>
+    </form>
+</div>
+
+<script>
+    CKEDITOR.replace('Content');
+</script>
